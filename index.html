@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Doors</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            font-family: 'Raleway', sans-serif;
+        }
+        
+        .background {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            z-index: 1;
+        }
+        
+        .door-container {
+            position: absolute;
+            width: 105%;
+            height: 105%;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .door {
+            height: 105%;
+            width: 105%;
+            position: absolute;
+            top: -4%;
+            transition: transform 1.5s ease-in-out;
+        }
+        
+        .left-door {
+            left: -5%;
+            transform: translateX(0);
+        }
+        
+        .right-door {
+            right: 1.7%;
+            transform: translateX(0);
+        }
+        
+        .door-open .left-door {
+            transform: translateX(-100%);
+        }
+        
+        .door-open .right-door {
+            transform: translateX(100%);
+        }
+        
+        .button {
+            position: absolute;
+            z-index: 3;
+            bottom: 290px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            transition: transform 0.3s, bottom 0.8s ease-in-out;
+            width: 400px;
+            height: auto;
+        }
+        
+        .button:hover {
+            transform: translateX(-50%) scale(1.1);
+        }
+        
+        .button-grabbed {
+            bottom: 120vh !important;
+        }
+        
+        /* Claw styles */
+        .claw-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+        }
+        
+        .claw {
+            position: absolute;
+            width: 800px;
+            bottom: 290px;
+            opacity: 1;
+            transition: all 0.8s ease-in-out;
+        }
+        
+        .claw-left {
+            left: -700px;
+            transform: rotate(0deg);
+        }
+        
+        .claw-right {
+            right: -700px;
+            transform: rotate(0deg);
+        }
+        
+        .claws-active .claw-left {
+            opacity: 1;
+            left: calc(50% - 790px);
+        }
+        
+        .claws-active .claw-right {
+            opacity: 1;
+            right: calc(50% - 780px);
+        }
+        
+        .claws-grab .claw-left,
+        .claws-grab .claw-right {
+            bottom: 120vh;
+        }
+        
+        /* 3D Robot styles */
+        .robot-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 6;
+            opacity: 1;
+            transition: transform 1.2s ease-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transform: translateY(100%);
+            pointer-events: none;
+        }
+        
+        .robot-visible {
+            transform: translateY(0);
+        }
+        
+        .robot-iframe {
+            width: 150%;
+            height: 150%;
+            border: none;
+            position: relative;
+            top: 12%;
+            left: -0%;
+            transform: scale(0.8);
+            pointer-events: auto;
+        }
+        
+        /* Profile image styles */
+        .profile-container {
+            position: absolute;
+            top: 50px;
+            left: -500px;
+            z-index: 5;
+            opacity: 1;
+            transition: left 1.2s ease-out;
+            pointer-events: none;
+        }
+        
+        .profile-visible {
+            left: 50px;
+            pointer-events: auto;
+        }
+        
+        .profile-frame {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #232526 0%, #1c1c1c 100%); /* Matching bubble gradient */
+            border: none;
+            box-shadow: 
+                0 15px 35px rgba(0,0,0,0.6),
+                0 5px 15px rgba(0,0,0,0.4),
+                inset 0 2px 1px rgba(255,255,255,0.1),
+                inset 0 -2px 1px rgba(0,0,0,0.6);
+            padding: 15px; /* Add padding for the metallic border effect */
+        }
+        
+        .profile-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.2) 0%, 
+                rgba(255,255,255,0.05) 25%, 
+                rgba(255,255,255,0) 50%, 
+                rgba(0,0,0,0.1) 75%, 
+                rgba(0,0,0,0.2) 100%);
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .profile-image-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            position: relative;
+            z-index: 0;
+        }
+        
+        /* Online status indicator */
+        .online-status {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            width: 22px;
+            height: 22px;
+            background-color: transparent;
+            border-radius: 50%;
+            border: 5px solid #2ecc71; /* Green initially */
+            z-index: 6;
+            transition: border-color 0.5s ease, transform 0.3s ease; /* Added transform for pop animation */
+        }
+        
+        .status-red {
+            border-color: #e74c3c; /* Red color for offline/busy status */
+            animation: statusPop 0.5s ease forwards;
+        }
+        
+        /* Pop animation for status change */
+        @keyframes statusPop {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.5);
+            }
+            75% {
+                transform: scale(0.8);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        /* Chat bubble styles */
+        .chat-bubble {
+            position: absolute;
+            top: 70px;
+            left: 350px;
+            background: linear-gradient(135deg, #232526 0%, #1c1c1c 100%);
+            color: #e0e0e0;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 
+                0 15px 35px rgba(0,0,0,0.6),
+                0 5px 15px rgba(0,0,0,0.4),
+                inset 0 2px 1px rgba(255,255,255,0.1),
+                inset 0 -2px 1px rgba(0,0,0,0.6);
+            max-width: 420px;
+            min-height: 150px; /* Set a minimum height for both bubbles */
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            z-index: 7;
+            display: none;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box; /* Ensure padding is included in height */
+        }
+        
+        .chat-bubble::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.2) 0%, 
+                rgba(255,255,255,0.05) 25%, 
+                rgba(255,255,255,0) 50%, 
+                rgba(0,0,0,0.1) 75%, 
+                rgba(0,0,0,0.2) 100%);
+            pointer-events: none;
+            border-radius: 20px;
+        }
+        
+        .chat-bubble::before {
+            display: none; /* Remove the triangle */
+        }
+        
+        .chat-bubble-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: space-between;
+        }
+        
+        .chat-bubble h3 {
+            margin-top: 0;
+            color: #74b9ff;
+            font-size: 24px;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            text-shadow: 0 2px 3px rgba(0,0,0,0.7);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .chat-bubble p {
+            margin-bottom: 30px;
+            line-height: 1.8;
+            font-size: 18px;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            flex-grow: 1; /* Allow paragraph to grow to fill space */
+        }
+        
+        .chat-bubble button {
+            background-color: #0984e3; /* Solid color instead of gradient */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px; /* Less rounded */
+            cursor: pointer;
+            font-weight: 600;
+            float: right;
+            transition: all 0.2s ease; /* Faster, simpler transition */
+            font-size: 15px;
+            letter-spacing: 1px;
+            box-shadow: none; /* Remove shadow */
+            text-transform: uppercase;
+            position: relative;
+            z-index: 2;
+            text-shadow: none; /* Remove text shadow */
+        }
+        
+        .chat-bubble button:hover {
+            background-color: #0652DD; /* Simple color change on hover */
+            transform: translateY(-2px); /* Subtle lift */
+        }
+        
+        .chat-bubble button:active {
+            transform: translateY(0); /* Press effect */
+        }
+        
+        .chat-bubble.show {
+            opacity: 1;
+            transform: translateY(0);
+            display: block;
+        }
+        
+        /* Info box behind profile */
+        .profile-info-box {
+            position: absolute;
+            top: 30px;
+            left: -600px; /* Start off-screen to the left */
+            width: 380px;
+            min-height: 380px;
+            background: linear-gradient(135deg, #232526 0%, #1c1c1c 100%);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 
+                0 15px 35px rgba(0,0,0,0.6),
+                0 5px 15px rgba(0,0,0,0.4),
+                inset 0 2px 1px rgba(255,255,255,0.1),
+                inset 0 -2px 1px rgba(0,0,0,0.6);
+            z-index: 4;
+            opacity: 1;
+            transition: left 1.2s ease-out; /* Same duration and easing for both boxes */
+            pointer-events: none;
+            overflow: hidden;
+            color: #e0e0e0;
+        }
+        
+        .info-box-visible {
+            left: 30px;
+            pointer-events: auto;
+        }
+        
+        .profile-info-content {
+            position: relative;
+            z-index: 1;
+            margin-top: 270px; /* Increased from 270px to 300px to move content down */
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        .profile-info-content h2 {
+            color: #74b9ff;
+            font-size: 28px;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 3px rgba(0,0,0,0.7);
+            padding-top: 20px; /* Added padding to push the name down further */
+        }
+        
+        .profile-info-content h3 {
+            color: #dfe6e9;
+            font-size: 22px;
+            font-weight: 400;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+        
+        .profile-info-content p {
+            line-height: 1.6;
+            margin-bottom: 10px; /* Reduced from 15px to 10px */
+            font-size: 15px; /* Reduced from 16px to 15px to save space */
+            letter-spacing: 0.3px;
+        }
+        
+        .profile-info-content ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 10px 0; /* Reduced from 15px to 10px */
+        }
+        
+        .profile-info-content li {
+            padding: 6px 0; /* Reduced from 8px to 6px */
+            display: flex;
+            align-items: center;
+        }
+        
+        .profile-info-content li::before {
+            content: '•';
+            color: #4ca5ff;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        /* Loading animation for robot */
+        .loader {
+            width: 85px;
+            height: 50px;
+            --g1: conic-gradient(from 90deg at left 3px top 3px, #0000 90deg, #fff 0);
+            --g2: conic-gradient(from -90deg at bottom 3px right 3px, #0000 90deg, #fff 0);
+            background: var(--g1), var(--g1), var(--g1), var(--g2), var(--g2), var(--g2);
+            background-position: left, center, right;
+            background-repeat: no-repeat;
+            animation: l9 1s infinite;
+            position: absolute;
+            top: 60%;
+            left: 51%;
+            transform: translate(-50%, -30%); /* Positioned on robot's chest */
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes l9 {
+            0% {background-size: 25px 50%, 25px 50%, 25px 50%}
+            25% {background-size: 25px 100%, 25px 50%, 25px 50%}
+            50% {background-size: 25px 50%, 25px 100%, 25px 50%}
+            75% {background-size: 25px 50%, 25px 50%, 25px 100%}
+            100% {background-size: 25px 50%, 25px 50%, 25px 50%}
+        }
+
+        .loader-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Robot message bubble */
+        .robot-message {
+            position: absolute;
+            top: 60%;
+            left: 51%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #232526 0%, #1c1c1c 100%);
+            color: #e0e0e0;
+            padding: 18px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 500;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            box-shadow: 
+                0 15px 35px rgba(0,0,0,0.6),
+                0 5px 15px rgba(0,0,0,0.4),
+                inset 0 2px 1px rgba(255,255,255,0.1),
+                inset 0 -2px 1px rgba(0,0,0,0.6);
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            white-space: nowrap;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            letter-spacing: 0.5px;
+        }
+
+        /* Arrow pointing up to the robot */
+        .robot-message::after {
+            content: '';
+            position: absolute;
+            top: -15px; /* Position above the bubble */
+            left: 52%;
+            transform: translateX(-50%);
+            border-width: 0 15px 15px 15px;
+            border-style: solid;
+            border-color: transparent transparent #232526 transparent; /* Match top gradient color */
+            rotate: 0deg; /* Flip arrow to point up */
+            filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.3));
+        }
+
+        .robot-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.2) 0%, 
+                rgba(255,255,255,0.05) 25%, 
+                rgba(255,255,255,0) 50%, 
+                rgba(0,0,0,0.1) 75%, 
+                rgba(0,0,0,0.2) 100%);
+            pointer-events: none;
+            border-radius: 30px;
+            z-index: -1;
+        }
+
+        .robot-message-visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        /* Navigation buttons on right side */
+        .nav-buttons-container {
+            position: absolute;
+            top: 30px;
+            right: -500px;
+            width: 380px;
+            min-height: 380px;
+            background: transparent;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: none;
+            z-index: 20;
+            opacity: 1;
+            transition: right 1.2s ease-out;
+            border: none;
+            overflow: hidden;
+            color: #e0e0e0;
+            pointer-events: none;
+        }
+        
+        .nav-buttons-visible {
+            right: 30px;
+            pointer-events: auto;
+        }
+        
+        /* Update to fix button spacing - the last button needs no bottom margin */
+        .nav-button:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Individual buttons for navigation - positioning fix */
+        .nav-button-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            padding: 30px;
+            z-index: 20;
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        
+        .nav-buttons-wrapper-visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        
+        .nav-button {
+            background: linear-gradient(135deg, #2a2d2e 0%, #262626 100%);
+            color: #e0e0e0;
+            border: none;
+            border-radius: 12px;
+            padding: 25px 30px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            box-shadow: 
+                0 8px 15px rgba(0,0,0,0.7),
+                inset 0 1px 1px rgba(255,255,255,0.1),
+                inset 0 -1px 1px rgba(0,0,0,0.6);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            backdrop-filter: blur(3px); /* Add slight blur effect */
+        }
+        
+        .nav-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 15px 25px rgba(0,0,0,0.8),
+                inset 0 1px 1px rgba(255,255,255,0.2),
+                inset 0 -1px 1px rgba(0,0,0,0.6);
+        }
+        
+        /* Profile button pop animation */
+        @keyframes profileButtonPop {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.15); }
+            60% { transform: scale(0.95); }
+            80% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .profile-button-pop {
+            animation: profileButtonPop 0.6s ease forwards;
+        }
+        
+        /* Right side box - similar to profile box but on right side */
+        .right-info-box {
+            position: absolute;
+            top: 30px;
+            right: -750px; /* Start further off-screen due to increased width */
+            width: 400px; /* Increased width */
+            min-height: 610px; /* Increased height */
+            background: linear-gradient(135deg, #232526 0%, #1c1c1c 100%);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 
+                0 15px 35px rgba(0,0,0,0.6),
+                0 5px 15px rgba(0,0,0,0.4),
+                inset 0 2px 1px rgba(255,255,255,0.1),
+                inset 0 -2px 1px rgba(0,0,0,0.6);
+            z-index: 4; /* Lower z-index to place behind robot */
+            opacity: 1;
+            transition: right 1.2s ease-out;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+            color: #e0e0e0;
+            pointer-events: none;
+        }
+        
+        .right-box-visible {
+            right: 20px;
+            pointer-events: auto;
+        }
+
+        /* Profile Modal Box */
+        .profile-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #232526 0%, #1c1c1c 100%);
+            border-radius: 0;
+            padding: 40px;
+            box-shadow: none;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-out;
+            overflow-y: auto;
+            color: #e0e0e0;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Raleway', sans-serif;
+        }
+
+        .profile-modal-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .profile-modal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+
+        .profile-modal-image {
+            width: 350px;
+            height: 250px;
+            border-radius: 50%;
+            margin-right: 30px;
+            border: none;
+            padding: 15px;
+            background: linear-gradient(135deg, #232526 0%, #1c1c1c 100%);
+            box-shadow: 
+                0 15px 35px rgba(0,0,0,0.6),
+                0 5px 15px rgba(0,0,0,0.4),
+                inset 0 2px 1px rgba(255,255,255,0.1),
+                inset 0 -2px 1px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-modal-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.2) 0%, 
+                rgba(255,255,255,0.05) 25%, 
+                rgba(255,255,255,0) 50%, 
+                rgba(0,0,0,0.1) 75%, 
+                rgba(0,0,0,0.2) 100%);
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .profile-modal-image-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .profile-modal-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            position: relative;
+            z-index: 0;
+        }
+
+        .profile-modal-info h1 {
+            color: #74b9ff;
+            font-size: 36px;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+
+        .profile-modal-info h2 {
+            color: #dfe6e9;
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 15px;
+            font-family: 'Raleway', sans-serif;
+            letter-spacing: 0.3px;
+        }
+
+        .profile-modal-info p {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 300;
+            line-height: 1.6;
+            font-size: 16px;
+            letter-spacing: 0.2px;
+        }
+
+        .profile-modal-content {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+            padding-bottom: 80px; /* Added padding at the bottom */
+        }
+
+        .profile-modal-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 0;
+            padding: 25px;
+            box-shadow: 
+                0 5px 15px rgba(0,0,0,0.3),
+                inset 0 1px 1px rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .skill-logos-image {
+            position: absolute;
+            top: -60px;
+            right: -15px;
+            width: 400px;
+            height: auto;
+            opacity: 0.8;
+        }
+
+        /* Add rounded edges to specific sections */
+        .profile-modal-section:nth-child(1), /* Skills */
+        .profile-modal-section:nth-child(3), /* Interests */
+        .profile-modal-section:nth-child(4) { /* Contact */
+            border-radius: 15px;
+        }
+
+        .profile-modal-section:nth-child(2) { /* Education */
+            border-radius: 15px;
+        }
+
+        .profile-modal-section h3 {
+            color: #74b9ff;
+            font-size: 24px;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+
+        .profile-modal-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .profile-modal-section li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            padding-left: 20px;
+            font-family: 'Raleway', sans-serif;
+            font-weight: 400;
+            letter-spacing: 0.2px;
+            line-height: 1.5;
+        }
+
+        .profile-modal-section li::before {
+            content: '•';
+            color: #74b9ff;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            top: 10px;
+        }
+
+        .education-institute {
+            color: #4ca5ff;
+            margin-top: 5px;
+            font-size: 0.9em;
+            padding-left: 0;
+            font-family: 'Raleway', sans-serif;
+            font-weight: 500;
+        }
+
+        .education-cgpa {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 5px;
+            display: inline-block;
+            padding-left: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .profile-modal-section li:last-child {
+            border-bottom: none;
+        }
+
+        .modal-close {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #232526 0%, #1c1c1c 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #e0e0e0;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 
+                0 8px 15px rgba(0,0,0,0.7),
+                inset 0 1px 1px rgba(255,255,255,0.1),
+                inset 0 -1px 1px rgba(0,0,0,0.6);
+            z-index: 1001;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Modal styles - shared between profile and projects */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+        
+        .modal-overlay-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Projects modal styles */
+        .projects-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            z-index: 101;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.9);
+            transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        
+        .projects-modal-visible {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        
+        .projects-modal-header {
+            display: flex;
+            align-items: center;
+            padding: 50px 80px;
+            background: linear-gradient(135deg, #232526 0%, #1c1c1c 100%);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            color: #ffffff;
+        }
+        
+        .projects-modal-info {
+            flex: 1;
+            padding-left: 50px;
+        }
+        
+        .projects-modal-info h1 {
+            color: #74b9ff;
+            font-size: 42px;
+            margin-bottom: 15px;
+            font-family: 'Raleway', sans-serif;
+            letter-spacing: 0.5px;
+        }
+        
+        .projects-modal-info h2 {
+            color: #dfe6e9;
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 15px;
+            font-family: 'Raleway', sans-serif;
+            letter-spacing: 0.3px;
+        }
+        
+        .projects-modal-info p {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 300;
+            line-height: 1.6;
+            font-size: 16px;
+            letter-spacing: 0.2px;
+            color: #ffffff;
+        }
+        
+        .projects-modal-content {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+            padding: 40px 80px 80px;
+        }
+        
+        .project-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1);
+        }
+        
+        .project-card h3 {
+            color: #74b9ff;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .project-card p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #ffffff;
+        }
+        
+        .project-card .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .project-card .tech-tag {
+            background: rgba(116, 185, 255, 0.2);
+            color: #74b9ff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .project-card .project-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .project-card .project-link-button {
+            background-color: #0984e3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .project-card .project-link-button:hover {
+            background-color: #0652DD;
+            transform: translateY(-2px);
+        }
+
+        .profile-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .profile-link a {
+            color: #e0e0e0;
+            text-decoration: none;
+            flex-grow: 1;
+        }
+
+        .profile-link a:hover {
+            color: #74b9ff;
+        }
+
+        .go-button {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .go-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Profile loading animation */
+        .profile-loader {
+            width: 85px;
+            height: 50px;
+            --g1: conic-gradient(from 90deg at left 3px top 3px, #0000 90deg, #fff 0);
+            --g2: conic-gradient(from -90deg at bottom 3px right 3px, #0000 90deg, #fff 0);
+            background: var(--g1), var(--g1), var(--g1), var(--g2), var(--g2), var(--g2);
+            background-position: left, center, right;
+            background-repeat: no-repeat;
+            animation: l9 1s infinite;
+            position: absolute;
+            top: 50%;
+            right: -100px;
+            transform: translateY(-50%);
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        .profile-loader-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background image -->
+    <img src="BG2.jpg" class="background" alt="Background">
+    
+    <!-- 3D Robot container -->
+    <div class="robot-container" id="robotContainer">
+        <iframe src='https://my.spline.design/portfoliocopyfinal-KwzS6NpjjUCHHAZtp5ooc9Sb/' class="robot-iframe" frameborder='0'></iframe>
+        <div class="loader" id="robotLoader"></div>
+        <div class="robot-message" id="robotMessage">Hey Wassup !! Welcome !!</div>
+    </div>
+    
+    <!-- Door container -->
+    <div class="door-container" id="doorContainer">
+        <img src="LEFT DOOR.png" class="door left-door" alt="Left Door">
+        <img src="RIGHT DOOR.png" class="door right-door" alt="Right Door">
+    </div>
+    
+    <!-- Button to open doors -->
+    <img src="BUTTON.png" class="button" id="doorButton" alt="Open Button">
+    
+    <!-- Claws container -->
+    <div class="claw-container" id="clawContainer">
+        <img src="CLAWL.png" class="claw claw-left" id="clawLeft" alt="Left Claw">
+        <img src="CLAWR.png" class="claw claw-right" id="clawRight" alt="Right Claw">
+    </div>
+    
+    <!-- Profile info box -->
+    <div class="profile-info-box" id="profileInfoBox">
+        <div class="profile-info-content">
+            <h2>Yogendthira VK</h2>
+            <h3>Lets Grow together, Glow togegther!</h3>
+            <p>Welcome to my portfolio. Im persuing B.Tech Artificial Intelligence And Data Science (II year) at Karpagam Institute of Technology, Coimbatore</p>
+            <ul>
+                <li>M E R N Stack </li>
+                <li>C++ </li>
+                <li>Project Management </li>
+                <li>Team Work </li>
+        
+            </ul>
+           
+        </div>
+    </div>
+    
+    <!-- Profile image container -->
+    <div class="profile-container" id="profileContainer">
+        <div class="profile-frame">
+            <div class="profile-image-container">
+                <img src="YOUR IMAGE.png" class="profile-image" alt="Profile">
+            </div>
+        </div>
+        <div class="online-status" id="onlineStatus"></div>
+        <div class="profile-loader" id="profileLoader"></div>
+    </div>
+    
+    <!-- Chat bubbles -->
+    <div class="chat-bubble" id="chatBubble1">
+        <div class="chat-bubble-content">
+            <h3>Welcome!</h3>
+            <p>Heyy! I am Yogendthira.</p>
+            <button id="okButton1">OK</button>
+        </div>
+    </div>
+    
+    <div class="chat-bubble" id="chatBubble2">
+        <div class="chat-bubble-content">
+            <h3>Introduction</h3>
+            <p>This is my AI assistant Yelva. He will guide you navigate my portfolio.</p>
+            <button id="okButton2">OK</button>
+        </div>
+    </div>
+    
+    <!-- Right side info box -->
+    <div class="right-info-box" id="rightInfoBox"></div>
+    
+    <!-- Navigation buttons -->
+    <div class="nav-buttons-container" id="navButtons">
+        <button class="nav-button" id="profileButton"><span>PROFILE</span></button>
+        <button class="nav-button"><span>PROJECTS</span></button>
+        <button class="nav-button"><span>ACHIEVEMENTS</span></button>
+        <button class="nav-button"><span>CONTACT ME</span></button>
+        <button class="nav-button"><span>MY TEAM 💎</span></button>
+        <button class="nav-button"><span>MY BLOG</span></button>
+    </div>
+    
+    <!-- Add modal overlay -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+
+    <!-- Add profile modal -->
+    <div class="profile-modal" id="profileModal">
+        <button class="modal-close" id="modalClose">Back to Home</button>
+        <div class="profile-modal-header">
+            <div class="profile-modal-image">
+                <div class="profile-modal-image-container">
+                    <img src="YOUR IMAGE.png" alt="Profile">
+                </div>
+            </div>
+            <div class="profile-modal-info">
+                <h1>Yogendthira VK</h1>
+                <h2>Lets Grow together, Glow together!</h2>
+                <p>I'm pursuing B.Tech in Artificial Intelligence And Data Science (II year) at Karpagam Institute of Technology, Coimbatore. Passionate about technology and innovation.</p>
+            </div>
+        </div>
+        <div class="profile-modal-content">
+            <div class="profile-modal-section">
+                <h3>Skills</h3>
+                <img src="SKILL LOGOS.png"  class="skill-logos-image" alt="Skill Logos" >
+                <ul>
+                    <li>MERN Stack</li>
+                    <li>Languages : C++, Python </li>
+                    <li>AI & NLP : LLAMA, BERT, OCR</li>
+                    <li>Team Work & Great Lead</li>
+                    <li>AI & ML</li>
+                </ul>
+            </div>
+            <div class="profile-modal-section">
+                <h3>Education</h3>
+                <ul>
+                    <li>
+                        B.Tech Artificial Intelligence And Data Science (Current)
+                        <span class="education-institute">KARPAGAM INSTITUTE OF TECHNOLOGY, Coimbatore</span>
+                        
+                    </li>
+                   
+                    <li>
+                        LKG To Class XII 
+                        <span class="education-institute">BHARATHI MATRIC HR. SEC. SCHOOL, Coimbatore</span>
+                        </li>
+
+                </ul>
+            </div>
+            <div class="profile-modal-section">
+                <h3>Interests</h3>
+                <ul>
+                    <li>Web Development</li>
+                    <li>Competitive Programming</li>
+                    <li>Team projects</li>
+                    <li>Real Time object tracking (ML)</li>
+                    <li>3D Modelling (BLENDER)</li>
+                 
+                </ul>
+            </div>
+            <div class="profile-modal-section">
+                <h3>Contact</h3>
+                <ul>
+                    <li>Email: yogendthira.official@gmail.com</li>
+                    <li class="profile-link">
+                        <a href="https://linkedin.com/in/yogendthira-vk" target="_blank">LinkedIn: linkedin.com/in/yogendthira-vk</a>
+                        <button class="go-button" onclick="window.open('https://linkedin.com/in/yogendthira-vk', '_blank')">GO</button>
+                    </li>
+                    <li>Phone : (+91) 8438403239</li>
+                    <li>Location: Coimbatore, Tamil Nadu, India</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MAIN PROJECT MODAL -->
+    <div class="projects-modal" id="projectsModal">
+        <button class="modal-close" id="projectsModalClose">Back to Home</button>
+        <div class="projects-modal-header">
+            <div class="projects-modal-info">
+                <h1>MAIN PROJECT MODAL</h1>
+                <h2>Showcasing my technical skills and creativity</h2>
+                <p>Here are some of the projects I've worked on, demonstrating my skills in web development, AI, and more.</p>
+            </div>
+        </div>
+        <div class="projects-modal-content">
+            <div class="project-card">
+                <img src="https://via.placeholder.com/200x200" alt="Project 1" style="width:200px;height:200px;margin-bottom:15px;">
+                <h3>Project 1</h3>
+                <button class="project-link-button" onclick="openProjectModal('project1Modal')">VIEW</button>
+            </div>
+            <div class="project-card">
+                <img src="https://via.placeholder.com/200x200" alt="Project 2" style="width:200px;height:200px;margin-bottom:15px;">
+                <h3>Project 2</h3>
+                <button class="project-link-button" onclick="openProjectModal('project2Modal')">VIEW</button>
+            </div>
+            <div class="project-card">
+                <img src="https://via.placeholder.com/200x200" alt="Project 3" style="width:200px;height:200px;margin-bottom:15px;">
+                <h3>Project 3</h3>
+                <button class="project-link-button" onclick="openProjectModal('project3Modal')">VIEW</button>
+            </div>
+            <div class="project-card">
+                <img src="https://via.placeholder.com/200x200" alt="Project 4" style="width:200px;height:200px;margin-bottom:15px;">
+                <h3>Project 4</h3>
+                <button class="project-link-button" onclick="openProjectModal('project4Modal')">VIEW</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PROJECT1 MODAL -->
+    <div class="projects-modal" id="project1Modal">
+        <button class="modal-close" id="project1ModalClose">Back to Main Projects</button>
+        <div class="projects-modal-header">
+            <div class="projects-modal-info">
+                <h1>PROJECT1 MODAL</h1>
+                <h2>Detailed explanation of Project 1</h2>
+                <p>This is where you will provide a detailed explanation of your first project.</p>
+            </div>
+        </div>
+        <div class="projects-modal-content">
+            <div class="project-card" style="grid-column: span 2;">
+                <h3>Project 1 Details</h3>
+                <p>Add your detailed project description here. You can include information about the technologies used, challenges faced, and solutions implemented.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PROJECT2 MODAL -->
+    <div class="projects-modal" id="project2Modal">
+        <button class="modal-close" id="project2ModalClose">Back to Main Projects</button>
+        <div class="projects-modal-header">
+            <div class="projects-modal-info">
+                <h1>PROJECT2 MODAL</h1>
+                <h2>Detailed explanation of Project 2</h2>
+                <p>This is where you will provide a detailed explanation of your second project.</p>
+            </div>
+        </div>
+        <div class="projects-modal-content">
+            <div class="project-card" style="grid-column: span 2;">
+                <h3>Project 2 Details</h3>
+                <p>Add your detailed project description here. You can include information about the technologies used, challenges faced, and solutions implemented.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PROJECT3 MODAL -->
+    <div class="projects-modal" id="project3Modal">
+        <button class="modal-close" id="project3ModalClose">Back to Main Projects</button>
+        <div class="projects-modal-header">
+            <div class="projects-modal-info">
+                <h1>PROJECT3 MODAL</h1>
+                <h2>Detailed explanation of Project 3</h2>
+                <p>This is where you will provide a detailed explanation of your third project.</p>
+            </div>
+        </div>
+        <div class="projects-modal-content">
+            <div class="project-card" style="grid-column: span 2;">
+                <h3>Project 3 Details</h3>
+                <p>Add your detailed project description here. You can include information about the technologies used, challenges faced, and solutions implemented.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PROJECT4 MODAL -->
+    <div class="projects-modal" id="project4Modal">
+        <button class="modal-close" id="project4ModalClose">Back to Main Projects</button>
+        <div class="projects-modal-header">
+            <div class="projects-modal-info">
+                <h1>PROJECT4 MODAL</h1>
+                <h2>Detailed explanation of Project 4</h2>
+                <p>This is where you will provide a detailed explanation of your fourth project.</p>
+            </div>
+        </div>
+        <div class="projects-modal-content">
+            <div class="project-card" style="grid-column: span 2;">
+                <h3>Project 4 Details</h3>
+                <p>Add your detailed project description here. You can include information about the technologies used, challenges faced, and solutions implemented.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        
+       
+        document.addEventListener("keydown", function(e) {
+    if (e.code === "Enter") { // When spacebar is pressed
+      document.getElementById("doorButton").click(); // Trigger click on the image
+    }
+  });
+
+
+
+
+ 
+
+
+
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const doorButton = document.getElementById('doorButton');
+            const doorContainer = document.getElementById('doorContainer');
+            const clawContainer = document.getElementById('clawContainer');
+            const robotContainer = document.getElementById('robotContainer');
+            const profileContainer = document.getElementById('profileContainer');
+            const profileInfoBox = document.getElementById('profileInfoBox');
+            const chatBubble1 = document.getElementById('chatBubble1');
+            const chatBubble2 = document.getElementById('chatBubble2');
+            const okButton1 = document.getElementById('okButton1');
+            const okButton2 = document.getElementById('okButton2');
+            const onlineStatus = document.getElementById('onlineStatus');
+            const robotLoader = document.getElementById('robotLoader');
+            const robotMessage = document.getElementById('robotMessage');
+            const navButtons = document.getElementById('navButtons');
+            const navButtonsBox = document.getElementById('navButtonsBox');
+            const rightInfoBox = document.getElementById('rightInfoBox');
+            const profileButton = document.getElementById('profileButton');
+            const profileModal = document.getElementById('profileModal');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalClose = document.getElementById('modalClose');
+            
+            // Project modals
+            const projectsButton = document.querySelector('.nav-button:nth-child(2)');
+            const projectsModal = document.getElementById('projectsModal');
+            const projectsModalClose = document.getElementById('projectsModalClose');
+            const project1Modal = document.getElementById('project1Modal');
+            const project2Modal = document.getElementById('project2Modal');
+            const project3Modal = document.getElementById('project3Modal');
+            const project4Modal = document.getElementById('project4Modal');
+            const project1ModalClose = document.getElementById('project1ModalClose');
+            const project2ModalClose = document.getElementById('project2ModalClose');
+            const project3ModalClose = document.getElementById('project3ModalClose');
+            const project4ModalClose = document.getElementById('project4ModalClose');
+            
+            // Function to open project modals
+            window.openProjectModal = function(modalId) {
+                // Hide main projects modal
+                projectsModal.classList.remove('projects-modal-visible');
+                
+                // Show the specific project modal
+                document.getElementById(modalId).classList.add('projects-modal-visible');
+            };
+            
+            // Handle Profile button click
+            profileButton.addEventListener('click', function() {
+                profileModal.classList.add('profile-modal-visible');
+                modalOverlay.classList.add('modal-overlay-visible');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            // Handle Projects button click
+            projectsButton.addEventListener('click', function() {
+                projectsModal.classList.add('projects-modal-visible');
+                modalOverlay.classList.add('modal-overlay-visible');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            // Handle modal close for both modals
+            modalClose.addEventListener('click', function() {
+                profileModal.classList.remove('profile-modal-visible');
+                modalOverlay.classList.remove('modal-overlay-visible');
+                document.body.style.overflow = '';
+                
+                // Change status from red to green with pop animation
+                onlineStatus.classList.remove('status-red');
+                onlineStatus.classList.add('profile-button-pop');
+                
+                // Show profile loader for 1 second
+                setTimeout(function() {
+                    document.getElementById('profileLoader').classList.add('profile-loader-visible');
+                    
+                    // After 1 second, hide loader and show new message bubble
+                    setTimeout(function() {
+                        document.getElementById('profileLoader').classList.remove('profile-loader-visible');
+                        
+                        // Create and show new bubble message
+                        const newBubble = document.createElement('div');
+                        newBubble.className = 'chat-bubble';
+                        newBubble.id = 'newChatBubble';
+                        newBubble.innerHTML = `
+                            <div class="chat-bubble-content">
+                                <h3>New Message : </h3>
+                                <p>AI can't replace real talent and skill.Now, try hovering ur cursor on Yelva's head😂</p>
+                                <button id="newOkButton">OK</button>
+                            </div>
+                        `;
+                        document.body.appendChild(newBubble);
+                        
+                        // Show the bubble
+                        setTimeout(function() {
+                            newBubble.classList.add('show');
+                            
+                            // Add event listener to the OK button
+                            document.getElementById('newOkButton').addEventListener('click', function() {
+                                newBubble.classList.remove('show');
+                                
+                                // Remove the bubble from DOM after animation
+                                setTimeout(function() {
+                                    newBubble.remove();
+                                }, 600);
+                                
+                                // Change status back to red with pop animation
+                                setTimeout(function() {
+                                    onlineStatus.classList.remove('profile-button-pop');
+                                    onlineStatus.classList.add('status-red');
+                                }, 300);
+                            });
+                        }, 100);
+                    }, 1000);
+                }, 500);
+            });
+            
+            projectsModalClose.addEventListener('click', function() {
+                projectsModal.classList.remove('projects-modal-visible');
+                modalOverlay.classList.remove('modal-overlay-visible');
+                document.body.style.overflow = '';
+            });
+            
+            // Event listeners for project modal close buttons
+            project1ModalClose.addEventListener('click', function() {
+                project1Modal.classList.remove('projects-modal-visible');
+                projectsModal.classList.add('projects-modal-visible');
+            });
+            
+            project2ModalClose.addEventListener('click', function() {
+                project2Modal.classList.remove('projects-modal-visible');
+                projectsModal.classList.add('projects-modal-visible');
+            });
+            
+            project3ModalClose.addEventListener('click', function() {
+                project3Modal.classList.remove('projects-modal-visible');
+                projectsModal.classList.add('projects-modal-visible');
+            });
+            
+            project4ModalClose.addEventListener('click', function() {
+                project4Modal.classList.remove('projects-modal-visible');
+                projectsModal.classList.add('projects-modal-visible');
+            });
+            
+            // Close modals when clicking overlay
+            modalOverlay.addEventListener('click', function() {
+                profileModal.classList.remove('profile-modal-visible');
+                projectsModal.classList.remove('projects-modal-visible');
+                project1Modal.classList.remove('projects-modal-visible');
+                project2Modal.classList.remove('projects-modal-visible');
+                project3Modal.classList.remove('projects-modal-visible');
+                project4Modal.classList.remove('projects-modal-visible');
+                modalOverlay.classList.remove('modal-overlay-visible');
+                document.body.style.overflow = '';
+            });
+            
+            // Add console logs to debug
+            console.log("Initial setup:", { 
+                navButtons: navButtons,
+                navButtonsBox: navButtonsBox,
+                rightInfoBox: rightInfoBox
+            });
+            
+            doorButton.addEventListener('click', function() {
+                console.log("Door button clicked");
+                // First open the doors
+                doorContainer.classList.add('door-open');
+                
+                // Activate claws after doors open
+                setTimeout(function() {
+                    console.log("Activating claws");
+                    // Activate claws
+                    clawContainer.classList.add('claws-active');
+                    
+                    // After claws reach the button, grab it and move up
+                    setTimeout(function() {
+                        console.log("Claws grabbing button");
+                        clawContainer.classList.add('claws-grab');
+                        doorButton.classList.add('button-grabbed');
+                        
+                        // Show the robot after claws grab the button and move up
+                        setTimeout(function() {
+                            console.log("Showing robot");
+                            robotContainer.classList.add('robot-visible');
+                            
+                            // Show profile image after robot appears
+                            setTimeout(function() {
+                                console.log("Showing profile");
+                                profileContainer.classList.add('profile-visible');
+                                
+                                // Show info box with a slight delay
+                                setTimeout(function() {
+                                    console.log("Showing profile info box");
+                                    profileInfoBox.classList.add('info-box-visible');
+                                    rightInfoBox.classList.add('right-box-visible');
+                                    
+                                    // Show navigation buttons
+                                    setTimeout(function() {
+                                        console.log("Showing navigation buttons");
+                                        navButtons.classList.add('nav-buttons-visible');
+                                        
+                                        // Show first chat bubble
+                                        setTimeout(function() {
+                                            // Show profile loader before first chat bubble
+                                            document.getElementById('profileLoader').classList.add('profile-loader-visible');
+                                            
+                                            // Hide loader and show first chat bubble after 1 second
+                                            setTimeout(function() {
+                                                document.getElementById('profileLoader').classList.remove('profile-loader-visible');
+                                                chatBubble1.classList.add('show');
+                                            }, 1500);
+                                        }, 1200);
+                                    }, 100);
+                                }, 500);
+                            }, 800);
+                        }, 50);
+                    }, 1200);
+                }, 350);
+            });
+            
+            // Handle OK button clicks for chat bubbles
+            okButton1.addEventListener('click', function() {
+                chatBubble1.classList.remove('show');
+                
+                // Show loader before second chat bubble
+                document.getElementById('profileLoader').classList.add('profile-loader-visible');
+                
+                // Hide loader and show second chat bubble after 1 second
+                setTimeout(function() {
+                    document.getElementById('profileLoader').classList.remove('profile-loader-visible');
+                    chatBubble2.classList.add('show');
+                }, 1000);
+            });
+            
+            okButton2.addEventListener('click', function() {
+                chatBubble2.classList.remove('show');
+                
+                // Show loader on robot's chest
+                setTimeout(function() {
+                    robotLoader.classList.add('loader-visible');
+                    
+                    // After 2 seconds, hide loader and show robot message
+                    setTimeout(function() {
+                        robotLoader.classList.remove('loader-visible');
+                        
+                        // Show robot message
+                        setTimeout(function() {
+                            robotMessage.classList.add('robot-message-visible');
+                            
+                            // Make the PROFILE button pop twice after robot message appears
+                            setTimeout(function() {
+                                const profileButton = document.getElementById('profileButton');
+                                profileButton.classList.add('profile-button-pop');
+                                
+                                // Remove the animation class after it completes to allow it to be triggered again
+                                setTimeout(function() {
+                                    profileButton.classList.remove('profile-button-pop');
+                                    
+                                    // Add the animation class again for second pop
+                                    setTimeout(function() {
+                                        profileButton.classList.add('profile-button-pop');
+                                    }, 2000);
+                                }, 700); // Wait for first animation to complete
+                            }, 1200); // Wait a second after robot message appears
+                        }, 300);
+                        
+                    }, 2000); // Loader duration
+                    
+                    // Change online status to red with a delay
+                    setTimeout(function() {
+                        onlineStatus.classList.add('status-red');
+                        // Remove any previous pop animation class
+                        onlineStatus.classList.remove('profile-button-pop');
+                    },50);
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>
