@@ -8,6 +8,44 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Page Loader */
+        .page-loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+        
+        .page-loader {
+            width: 120px;
+            height: 70px;
+            --g1: conic-gradient(from 90deg at left 3px top 3px, #0000 90deg, #ffffff 0);
+            --g2: conic-gradient(from -90deg at bottom 3px right 3px, #0000 90deg, #ffffff 0);
+            background: var(--g1), var(--g1), var(--g1), var(--g2), var(--g2), var(--g2);
+            background-position: left, center, right;
+            background-repeat: no-repeat;
+            animation: pageLoad 1s infinite;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+
+        @keyframes pageLoad {
+            0% {background-size: 30px 50%, 30px 50%, 30px 50%}
+            25% {background-size: 30px 100%, 30px 50%, 30px 50%}
+            50% {background-size: 30px 50%, 30px 100%, 30px 50%}
+            75% {background-size: 30px 50%, 30px 50%, 30px 100%}
+            100% {background-size: 30px 50%, 30px 50%, 30px 50%}
+        }
+        
         body, html {
             margin: 0;
             padding: 0;
@@ -111,12 +149,12 @@
         
         .claws-active .claw-left {
             opacity: 1;
-            left: calc(50% - 790px);
+            left: calc(50% - 800px);
         }
         
         .claws-active .claw-right {
             opacity: 1;
-            right: calc(50% - 780px);
+            right: calc(50% - 800px);
         }
         
         .claws-grab .claw-left,
@@ -901,6 +939,97 @@
             border-bottom: none;
         }
 
+        /* Team member image styles */
+        .team-member-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: none;
+            padding: 15px;
+            background: linear-gradient(135deg, #232526 0%, #1c1c1c 100%);
+            box-shadow: 
+                0 15px 35px rgba(0,0,0,0.6),
+                0 5px 15px rgba(0,0,0,0.4),
+                inset 0 2px 1px rgba(255,255,255,0.1),
+                inset 0 -2px 1px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-member-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.2) 0%, 
+                rgba(255,255,255,0.05) 25%, 
+                rgba(255,255,255,0) 50%, 
+                rgba(0,0,0,0.1) 75%, 
+                rgba(0,0,0,0.2) 100%);
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .team-member-image-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .team-member-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            position: relative;
+            z-index: 0;
+        }
+        
+        /* LinkedIn input and button styles */
+        .linkedin-container {
+            display: flex;
+            margin-top: 15px;
+            width: 100%;
+        }
+        
+        .linkedin-input {
+            flex: 1;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px 0 0 6px;
+            padding: 8px 12px;
+            color: #e0e0e0;
+            font-family: 'Raleway', sans-serif;
+            font-size: 14px;
+        }
+        
+        .linkedin-button {
+            background-color: #0984e3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 0 6px 6px 0;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+        
+        .linkedin-button:hover {
+            background-color: #0652DD;
+        }
+        
         .modal-close {
             position: fixed;
             top: 20px;
@@ -1118,6 +1247,56 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
+        /* Main loading animation */
+        .main-loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .main-loader-container.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loader {
+            width: 85px;
+            height: 50px;
+            --g1: conic-gradient(from 90deg at left 3px top 3px, #0000 90deg, #fff 0);
+            --g2: conic-gradient(from -90deg at bottom 3px right 3px, #0000 90deg, #fff 0);
+            background: var(--g1), var(--g1), var(--g1), var(--g2), var(--g2), var(--g2);
+            background-position: left, center, right;
+            background-repeat: no-repeat;
+            animation: l9 1s infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes l9 {
+            0%   {background-size: 25px 50%, 25px 50%, 25px 50%}
+            25%  {background-size: 25px 100%, 25px 50%, 25px 50%}
+            50%  {background-size: 25px 50%, 25px 100%, 25px 50%}
+            75%  {background-size: 25px 50%, 25px 50%, 25px 100%}
+            100% {background-size: 25px 50%, 25px 50%, 25px 50%}
+        }
+        
+        .loader-text {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        
         /* Profile loading animation */
         .profile-loader {
             width: 85px;
@@ -1142,9 +1321,66 @@
             opacity: 1;
             visibility: visible;
         }
+        
+        /* Main loader styles */
+        .main-loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #121212;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+        
+        .main-loader-container .loader {
+            width: 120px;
+            height: 70px;
+            --g1: conic-gradient(from 90deg at left 3px top 3px, #0000 90deg, #ffffff 0);
+            --g2: conic-gradient(from -90deg at bottom 3px right 3px, #0000 90deg, #ffffff 0);
+            background: var(--g1), var(--g1), var(--g1), var(--g2), var(--g2), var(--g2);
+            background-position: left, center, right;
+            background-repeat: no-repeat;
+            animation: pageLoad 1s infinite;
+            position: relative;
+            left: 4%;
+            top: 20px;
+            transform: translateX(-50%);
+            opacity: 1;
+            visibility: visible;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes pageLoad {
+            0% {background-size: 30px 50%, 30px 50%, 30px 50%}
+            25% {background-size: 30px 100%, 30px 50%, 30px 50%}
+            50% {background-size: 30px 50%, 30px 100%, 30px 50%}
+            75% {background-size: 30px 50%, 30px 50%, 30px 100%}
+            100% {background-size: 30px 50%, 30px 50%, 30px 50%}
+        }
+        
+        .loader-text {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-top: 10px;
+            font-family: 'Montserrat', sans-serif;
+        }
     </style>
 </head>
 <body>
+    <!-- Main Loading Animation -->
+    <div class="main-loader-container" id="mainLoader">
+        <div class="loader"></div>
+        <div class="loader-text">Loading Elements</div>
+    </div>
+    
     <!-- Background image -->
     <img src="BG2.jpg" class="background" alt="Background">
     
@@ -1152,7 +1388,7 @@
     <div class="robot-container" id="robotContainer">
         <iframe src='https://my.spline.design/portfoliocopyfinal-KwzS6NpjjUCHHAZtp5ooc9Sb/' class="robot-iframe" frameborder='0'></iframe>
         <div class="loader" id="robotLoader"></div>
-        <div class="robot-message" id="robotMessage">Hey Wassup !! Welcome !!</div>
+        <div class="robot-message" id="robotMessage">  🙏🏻Welcome🙏🏻 </div>
     </div>
     
     <!-- Door container -->
@@ -1183,7 +1419,6 @@
                 <li>Team Work </li>
         
             </ul>
-           
         </div>
     </div>
     
@@ -1224,7 +1459,7 @@
         <button class="nav-button"><span>PROJECTS</span></button>
         <button class="nav-button"><span>ACHIEVEMENTS</span></button>
         <button class="nav-button"><span>CONTACT ME</span></button>
-        <button class="nav-button"><span>MY TEAM 💎</span></button>
+        <button class="nav-button"><span>MY TEAM and mentors </span></button>
         <button class="nav-button"><span>MY BLOG</span></button>
     </div>
     
@@ -1312,23 +1547,27 @@
         </div>
         <div class="projects-modal-content">
             <div class="project-card">
-                <img src="https://via.placeholder.com/200x200" alt="Project 1" style="width:200px;height:200px;margin-bottom:15px;">
-                <h3>Project 1</h3>
+                <img src="HAWK PROJ LOGO.png" alt="Project 1" style="width:450px;height:200px;margin-bottom:15px;border-radius: 12px;">
+                <h3>H A W K </h3>
+                <p style="color: #e0e0e0; size: 12px;"> High Accuracy Wordsmithing Kernel </p>
                 <button class="project-link-button" onclick="openProjectModal('project1Modal')">VIEW</button>
             </div>
             <div class="project-card">
-                <img src="https://via.placeholder.com/200x200" alt="Project 2" style="width:200px;height:200px;margin-bottom:15px;">
-                <h3>Project 2</h3>
+                <img src="GUIDESYNC PROJ LOGO.png" alt="Project 2" style="width:410px;height:200px;margin-bottom:15px; border-radius: 12px;">
+                <h3>GUIDESYNC LENS</h3>
+                <p style="color: #e0e0e0; size: 12px;"> Chatbot with integrated AR feature </p>
                 <button class="project-link-button" onclick="openProjectModal('project2Modal')">VIEW</button>
             </div>
             <div class="project-card">
-                <img src="https://via.placeholder.com/200x200" alt="Project 3" style="width:200px;height:200px;margin-bottom:15px;">
-                <h3>Project 3</h3>
+                <img src="PORTFOLIO PORJ LOGO.png" alt="GUIDESYNC LENS" style="width:400px;height:200px;margin-bottom:15px; border-radius: 12px;">
+                <h3>My Portfolio </h3>
+                <p style="color: #e0e0e0; size: 12px;"> Showcased my UI skill & Creativity </p>
                 <button class="project-link-button" onclick="openProjectModal('project3Modal')">VIEW</button>
             </div>
             <div class="project-card">
-                <img src="https://via.placeholder.com/200x200" alt="Project 4" style="width:200px;height:200px;margin-bottom:15px;">
+                <img src="WORK IN PORGRESS LOGO.jpg" alt="Coming Soon 🚀🚀" style="width:400px;height:200px;margin-bottom:15px; border-radius: 12px;">
                 <h3>Project 4</h3>
+                <p style="color: #e0e0e0; size: 12px;"> Innovating... </p>
                 <button class="project-link-button" onclick="openProjectModal('project4Modal')">VIEW</button>
             </div>
             </div>
@@ -1340,14 +1579,14 @@
         <button class="modal-close" id="project1ModalClose">Back to Main Projects</button>
         <div class="projects-modal-header">
             <div class="projects-modal-info">
-                <h1>PROJECT1 MODAL</h1>
-                <h2>Detailed explanation of Project 1</h2>
-                <p>This is where you will provide a detailed explanation of your first project.</p>
+                <h1>INTRODUCING - The H A W K</h1>
+                <h2>High Accuracy Wordsmithing Kernel</h2>
+                <p style="color: crimson; size: 12px;">An Ultimate Weapon For Using AI Tools, Research and for building Projects. </p>
             </div>
         </div>
         <div class="projects-modal-content">
             <div class="project-card" style="grid-column: span 2;">
-                <h3>Project 1 Details</h3>
+                <h3>HAWK - A Detailed View</h3>
                 <p>Add your detailed project description here. You can include information about the technologies used, challenges faced, and solutions implemented.</p>
             </div>
         </div>
@@ -1407,6 +1646,397 @@
         </div>
     </div>
     
+    <!-- MY TEAM MODAL -->
+    <div class="projects-modal" id="teamModal">
+        <button class="modal-close" id="teamModalClose">Back to Home</button>
+        <div class="projects-modal-header">
+            <div class="projects-modal-info">
+                <h1>MY TEAM</h1>
+                <h2>Meet the talented individuals I collaborate with</h2>
+                <p>Together we create amazing projects and push the boundaries of innovation.</p>
+            </div>
+        </div>
+        <div class="projects-modal-content" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="JEBAKUMAR SAR.png" alt="Team Member 1">
+                    </div>
+                </div>
+                <h3>Dr. Jebakumar Immanuel D </h3>
+                <h3 style="color: #dfe6e9;">MENTOR</h3>
+                <p> ● Associate Professor & Head - Artificial Intelligence and Data Science Department.</p>
+                <P> ● Research interests: MANET, Mobile Computing, Soft Computing, Optimization.</p>
+               
+                <!-- LinkedIn link will be added later -->
+                <li class="profile-link">
+                    <a href="https://www.linkedin.com/in/dr-jebakumar-immanuel-d-146aa47/?originalSubdomain=in" target="_blank" style="color: #0984e3;">LinkedIn Profile</a>
+                    <button class="go-button" onclick="window.open('https://www.linkedin.com/in/dr-jebakumar-immanuel-d-146aa47/?originalSubdomain=in', '_blank')">VISIT LINKED IN PROFILE</button>
+                </li>
+            </div>
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="RAMESH SAR.jpg" alt="Team Member 2">
+                    </div>
+                </div>
+                <h3>Dr. P N Ramesh</h3>
+                <h3 style="color: #dfe6e9;">MENTOR</h3>
+                
+                <p>● TECHNOLOGY TRAINER  </p>
+                <p>● Assistant Professor  </p>
+                <p>● Software Product Developer  </p>
+               
+                <!-- LinkedIn link will be added later -->
+                <li class="profile-link">
+                    <a href="https://www.linkedin.com/in/dr-p-n-ramesh-822b7922/" target="_blank" style="color: #0984e3;">LinkedIn Profile</a>
+                    <button class="go-button" onclick="window.open('https://www.linkedin.com/in/dr-p-n-ramesh-822b7922/', '_blank')">VISIT LINKED IN PROFILE</button>
+                </li>
+
+            </div>
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="VIGNESH SAR.jpg" alt="Team Member 3">
+                    </div>
+                </div>
+                <h3>Dr M Vignesh  </h3>
+                <h3 style="color: #dfe6e9;">MENTOR </h3>
+                <p> ● ASSISTANT PROFESSOR </p>
+                <p> ● DSA With Python </p>
+                <p> ● Tech Enthusiast </p>
+               
+                <!-- LinkedIn link will be added later -->
+
+                <li class="profile-link">
+                    <a href="https://www.linkedin.com/in/vignesh-m-1a44962b3/" target="_blank" style="color: #0984e3;">LinkedIn Profile</a>
+                    <button class="go-button" onclick="window.open('https://www.linkedin.com/in/vignesh-m-1a44962b3/', '_blank')">VISIT LINKED IN PROFILE </button>
+                </li>
+
+                
+            </div>
+            
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="NIVETHA AKA.jpg" alt="Team Member 4">
+                    </div>
+                </div>
+                <h3>NIVETHA S</h3>
+                <h3 style="color: #dfe6e9;">SENIOR TEAM LEAD</h3>
+               
+                <p> ● AI and Data Science Student</p>
+                <p> ● C++ | Python | Web Development</p>
+                <p> ● Passionate About Problem Solving</p>
+                <!-- LinkedIn link will be added later -->
+                <li class="profile-link">
+                    <a href="https://www.linkedin.com/in/nivetha-s-a67323321/" target="_blank" style="color: #0984e3;">LinkedIn Profile</a>
+                    <button class="go-button" onclick="window.open('https://www.linkedin.com/in/nivetha-s-a67323321/', '_blank')">VISIT LINKED IN PROFILE </button>
+                </li>
+            </div>
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="MONIA AKA.png" alt="Team Member 5" >
+                    </div>
+                </div>
+                <h3>MONIKA R</h3>
+                <h3 style="color: #dfe6e9;">SENIOR TEAM MEMBER</h3>
+                
+                <p> ● Data Science Enthusiast </p>
+                <P> ● AI, ML, and Data-Driven Solutions</p>
+                <P> ● Project Dev </P>
+                <!-- LinkedIn link will be added later -->
+                <li class="profile-link">
+                    <a href="https://www.linkedin.com/in/monika-r-679833202" target="_blank" style="color: #0984e3;">LinkedIn Profile</a>
+                    <button class="go-button" onclick="window.open('https://www.linkedin.com/in/monika-r-679833202', '_blank')">VISIT LINKED IN PROFILE </button>
+                </li>
+            </div>
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="nandana.jpg" alt="Team Member 6">
+                    </div>
+                </div>
+                <h3>NANDANARAJ R S</h3>
+                <h3 style="color: #dfe6e9;">TEAM MEMBER</h3>
+
+                <p> ● BE. EEE </p>
+                <P> ● C++ | Front end dev | Graphic Designer</p>
+                <P> ● Competitive Programming</P>
+              
+                <!-- LinkedIn link will be added later -->
+
+                <li class="profile-link">
+                    <a href="https://www.linkedin.com/in/nandanaraj-r-s-94a092292/" target="_blank" style="color: #0984e3;">LinkedIn Profile</a>
+                    <button class="go-button" onclick="window.open('https://www.linkedin.com/in/nandanaraj-r-s-94a092292/', '_blank')">VISIT LINKED IN PROFILE </button>
+                </li>
+
+            </div>
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="N KARTHI.png" alt="Team Member 7">
+                    </div>
+                </div>
+                <h3>KARTHIKEYAN N</h3>
+                <h3 style=color:white;"display: ;"> TEAM MEMBER</h3>
+                <p>● Full Stack Dev</p>
+                <p>● AI Integrations  </p>
+                <p>● Code Optimization</p>
+                <!-- LinkedIn link will be added later -->
+
+
+                <li class="profile-link">
+                    <a href="https://www.linkedin.com/in/karthikeyan-n-bb81662a3/" target="_blank" style="color: #0984e3;">LinkedIn Profile</a>
+                    <button class="go-button" onclick="window.open('https://www.linkedin.com/in/karthikeyan-n-bb81662a3/', '_blank')">VISIT LINKED IN PROFILE </button>
+                </li>
+
+                
+            </div>
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="GOKUL.png" alt="Team Member 8">
+                    </div>
+                </div>
+                <h3>GOKUL A R</h3>
+                <h3 style="color: #dfe6e9;">TEAM MEMBER </h3>
+                
+                <p>● AI & DS Enthusiast</p>
+                <p>● Full Stack Dev </p>
+                <p>● Code Optimization</p>
+                <!-- LinkedIn link will be added later -->
+
+                <li class="profile-link">
+                    <a href="https://www.linkedin.com/in/gokul-a-904244366/" target="_blank" style="color: #0984e3;">LinkedIn Profile</a>
+                    <button class="go-button" onclick="window.open('https://www.linkedin.com/in/gokul-a-904244366/', '_blank')">VISIT LINKED IN PROFILE </button>
+                </li>
+
+            </div>
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="s karthi.png" alt="Team Member 9">
+                    </div>
+                </div>
+                <h3>KARTHIKEYAN S </h3>
+                <h3 style="color: #dfe6e9;">TEAM MEMBER </h3>
+                <p>● C++ | MERN </p>
+                <p>● Competetive Programming</p>
+                <p>● Innovation enthusiast</p>
+                
+                
+                <li class="profile-link">
+                    <a href="https://www.linkedin.com/in/karthi-keyan-105427293/" target="_blank" style="color: #0984e3;">LinkedIn Profile</a>
+                    <button class="go-button" onclick="window.open('https://www.linkedin.com/in/karthi-keyan-105427293/', '_blank')">VISIT LINKED IN PROFILE </button>
+                </li>
+                
+                <!-- LinkedIn link will be added later -->
+            </div>
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="WORK IN PORGRESS LOGO.jpg" alt="Team Member 10">
+                    </div>
+                </div>
+                <h3>GOKULA RAMANAA</h3>
+                <h3 style="color: #dfe6e9;"> TEAM LEAD </h3>
+                <p>● BE. CSE </p>
+                <p>● C++ | MERN </p>
+                <p>● Competetive Programming</p>
+                <li class="profile-link">
+                    <a href="https://www.linkedin.com/in/nivetha-s-a67323321/" target="_blank" style="color: #0984e3;">LinkedIn Profile</a>
+                    <button class="go-button" onclick="window.open('https://www.linkedin.com/in/nivetha-s-a67323321/', '_blank')">VISIT LINKED IN PROFILE </button>
+                </li>
+                <!-- LinkedIn link will be added later -->
+            </div>
+
+            
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="sabari.png" alt="Team Member 11">
+                    </div>
+                </div>
+                <h3>SABARI S</h3>
+                <h3 style="color: #dfe6e9;"> TEAM MEMBER</h3>
+                <p>● BE. CSE </p>
+                <p>● C++ | MERN </p>
+                <p>● Competetive Programming</p>
+                   
+                <li class="profile-link">
+                    <a href="https://www.linkedin.com/in/nivetha-s-a67323321/" target="_blank" style="color: #0984e3;">LinkedIn Profile</a>
+                    <button class="go-button" onclick="window.open('https://www.linkedin.com/in/nivetha-s-a67323321/', '_blank')">VISIT LINKED IN PROFILE </button>
+                </li>
+                <!-- LinkedIn link will be added later -->
+            </div>
+
+
+
+
+
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="GD.png" alt="Team Member 10">
+                    </div>
+                </div>
+                <h3> MADHAN M</h3>
+                <h3 style="color: #dfe6e9;"> TEAM MEMBER</h3>
+                <p>● BE. CSE</p>
+                <p>● C++ | MERN </p>
+                <p>● Competetive Programming</p>
+                <!-- LinkedIn link will be added later -->
+
+                <li class="profile-link">
+                    <a href="https://www.linkedin.com/in/nivetha-s-a67323321/" target="_blank" style="color: #0984e3;">LinkedIn Profile</a>
+                    <button class="go-button" onclick="window.open('https://www.linkedin.com/in/nivetha-s-a67323321/', '_blank')">VISIT LINKED IN PROFILE </button>
+                </li>
+            </div>
+
+
+
+
+
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="WORK IN PORGRESS LOGO.jpg" alt="Team Member 10">
+                    </div>
+                </div>
+                <h3>Team Member 10</h3>
+                <p style="color: #e0e0e0; font-size: 14px;">Role / Position</p>
+                <p>Brief description about this team member and their contributions.</p>
+                <!-- LinkedIn link will be added later -->
+            </div>
+
+
+
+
+
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="WORK IN PORGRESS LOGO.jpg" alt="Team Member 11">
+                    </div>
+                </div>
+                <h3>Team Member 11</h3>
+                <p style="color: #e0e0e0; font-size: 14px;">Role / Position</p>
+                <p>Brief description about this team member and their contributions.</p>
+                <!-- LinkedIn link will be added later -->
+            </div>
+            <div class="project-card">
+                <div class="team-member-image">
+                    <div class="team-member-image-container">
+                        <img src="WORK IN PORGRESS LOGO.jpg" alt="Team Member 12">
+                    </div>
+                </div>
+                <h3>Team Member 12</h3>
+                <p style="color: #e0e0e0; font-size: 14px;">Role / Position</p>
+                <p>Brief description about this team member and their contributions.</p>
+                <!-- LinkedIn link will be added later -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- MY BLOG MODAL -->
+    <div class="projects-modal" id="blogModal">
+        <button class="modal-close" id="blogModalClose">Back to Home</button>
+        <div class="projects-modal-header">
+            <div class="projects-modal-info">
+                <h1>MY BLOG</h1>
+                <h2>Thoughts, insights, and experiences</h2>
+                <p>Explore my latest articles on technology, innovation, and personal growth.</p>
+            </div>
+        </div>
+        <div class="projects-modal-content">
+            <div class="project-card" style="grid-column: span 2;">
+                <img src="WORK IN PORGRESS LOGO.jpg" alt="Blog Post 1" style="width:100%;height:300px;margin-bottom:15px;border-radius: 12px;">
+                <h3>Latest Blog Post Title</h3>
+                <p style="color: #e0e0e0; size: 12px;">Posted on: January 1, 2023</p>
+                <p>Preview of the blog post content. Click below to read the full article.</p>
+                <button class="project-link-button">READ MORE</button>
+            </div>
+            <div class="project-card">
+                <img src="WORK IN PORGRESS LOGO.jpg" alt="Blog Post 2" style="width:100%;height:200px;margin-bottom:15px;border-radius: 12px;">
+                <h3>Blog Post 2</h3>
+                <p style="color: #e0e0e0; size: 12px;">Posted on: December 15, 2022</p>
+                <button class="project-link-button">READ MORE</button>
+            </div>
+            <div class="project-card">
+                <img src="WORK IN PORGRESS LOGO.jpg" alt="Blog Post 3" style="width:100%;height:200px;margin-bottom:15px;border-radius: 12px;">
+                <h3>Blog Post 3</h3>
+                <p style="color: #e0e0e0; size: 12px;">Posted on: November 30, 2022</p>
+                <button class="project-link-button">READ MORE</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ACHIEVEMENTS MODAL -->
+    <div class="projects-modal" id="achievementsModal">
+        <button class="modal-close" id="achievementsModalClose">Back to Home</button>
+        <div class="projects-modal-header">
+            <div class="projects-modal-info">
+                <h1>ACHIEVEMENTS</h1>
+                <h2>Milestones and recognitions</h2>
+                <p>A showcase of my awards, certifications, and notable accomplishments.</p>
+            </div>
+        </div>
+        <div class="projects-modal-content" style="grid-template-columns: 1fr; max-width: 900px; margin: 0 auto;">            <div class="project-card">
+                <img src="WORK IN PORGRESS LOGO.jpg" alt="Achievement 1" style="width:100%;height:200px;margin-bottom:15px;border-radius: 12px;">
+                <h3>Achievement 1</h3>
+                <p style="color: #e0e0e0; size: 12px;">Awarded on: March 2023</p>
+                <p>Description of this achievement and its significance.</p>
+            </div>
+            <div class="project-card">
+                <img src="WORK IN PORGRESS LOGO.jpg" alt="Achievement 2" style="width:100%;height:200px;margin-bottom:15px;border-radius: 12px;">
+                <h3>Achievement 2</h3>
+                <p style="color: #e0e0e0; size: 12px;">Awarded on: January 2023</p>
+                <p>Description of this achievement and its significance.</p>
+            </div>
+            <div class="project-card">
+                <img src="WORK IN PORGRESS LOGO.jpg" alt="Achievement 3" style="width:100%;height:200px;margin-bottom:15px;border-radius: 12px;">
+                <h3>Achievement 3</h3>
+                <p style="color: #e0e0e0; size: 12px;">Awarded on: October 2022</p>
+                <p>Description of this achievement and its significance.</p>
+            </div>
+            <div class="project-card">
+                <img src="WORK IN PORGRESS LOGO.jpg" alt="Achievement 4" style="width:100%;height:200px;margin-bottom:15px;border-radius: 12px;">
+                <h3>Achievement 4</h3>
+                <p style="color: #e0e0e0; size: 12px;">Awarded on: July 2022</p>
+                <p>Description of this achievement and its significance.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- CONTACT US MODAL -->
+    <div class="projects-modal" id="contactModal">
+        <button class="modal-close" id="contactModalClose">Back to Home</button>
+        <div class="projects-modal-header">
+            <div class="projects-modal-info">
+                <h1>CONTACT ME</h1>
+                <h2>Let's connect and collaborate</h2>
+                <p>Reach out to discuss projects, opportunities, or just to say hello!</p>
+            </div>
+        </div>
+        <div class="projects-modal-content">
+            <div class="project-card" style="grid-column: span 2;">
+                <h3>Get In Touch</h3>
+                <p>Feel free to contact me through any of the following channels:</p>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 15px;"><strong>Email:</strong> yogendthira.official@gmail.com</li>
+                    <li style="margin-bottom: 15px;"><strong>Phone:</strong> (+91) 8438403239</li>
+                    <li style="margin-bottom: 15px;"><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/yogendthira-vk" target="_blank" style="color: #74b9ff;">linkedin.com/in/yogendthira-vk</a></li>
+                    <li style="margin-bottom: 15px;"><strong>Location:</strong> Coimbatore, Tamil Nadu, India</li>
+                </ul>
+            </div>
+            <div class="project-card" style="grid-column: span 2;">
+                <img src="WORK IN PORGRESS LOGO.jpg" alt="Contact" style="width:100%;height:300px;margin-bottom:15px;border-radius: 12px;">
+            </div>
+        </div>
+    </div>
+    
     <script>
         
        
@@ -1425,6 +2055,17 @@
 
 
 
+        // Hide main loader when all content is loaded
+        window.addEventListener('load', function() {
+            const mainLoader = document.getElementById('mainLoader');
+            setTimeout(function() {
+                mainLoader.style.opacity = '0';
+                setTimeout(function() {
+                    mainLoader.style.visibility = 'hidden';
+                }, 500);
+            }, 1000); // Keep loader visible for at least 1 second after page load
+        });
+        
         document.addEventListener('DOMContentLoaded', function() {
             const doorButton = document.getElementById('doorButton');
             const doorContainer = document.getElementById('doorContainer');
@@ -1446,6 +2087,7 @@
             const profileModal = document.getElementById('profileModal');
             const modalOverlay = document.getElementById('modalOverlay');
             const modalClose = document.getElementById('modalClose');
+            const mainLoader = document.getElementById('mainLoader');
             
             // Project modals
             const projectsButton = document.querySelector('.nav-button:nth-child(2)');
@@ -1459,6 +2101,20 @@
             const project2ModalClose = document.getElementById('project2ModalClose');
             const project3ModalClose = document.getElementById('project3ModalClose');
             const project4ModalClose = document.getElementById('project4ModalClose');
+            
+            // New modals
+            const teamButton = document.querySelector('.nav-button:nth-child(5)');
+            const blogButton = document.querySelector('.nav-button:nth-child(6)');
+            const achievementsButton = document.querySelector('.nav-button:nth-child(3)');
+            const contactButton = document.querySelector('.nav-button:nth-child(4)');
+            const teamModal = document.getElementById('teamModal');
+            const blogModal = document.getElementById('blogModal');
+            const achievementsModal = document.getElementById('achievementsModal');
+            const contactModal = document.getElementById('contactModal');
+            const teamModalClose = document.getElementById('teamModalClose');
+            const blogModalClose = document.getElementById('blogModalClose');
+            const achievementsModalClose = document.getElementById('achievementsModalClose');
+            const contactModalClose = document.getElementById('contactModalClose');
             
             // Function to open project modals
             window.openProjectModal = function(modalId) {
@@ -1476,9 +2132,44 @@
                 document.body.style.overflow = 'hidden';
             });
             
+            // Hide main loader when all resources are loaded
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    mainLoader.classList.add('hidden');
+                }, 1500); // Show loader for at least 1.5 seconds
+            });
+            
             // Handle Projects button click
             projectsButton.addEventListener('click', function() {
                 projectsModal.classList.add('projects-modal-visible');
+                modalOverlay.classList.add('modal-overlay-visible');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            // Handle My Team button click
+            teamButton.addEventListener('click', function() {
+                teamModal.classList.add('projects-modal-visible');
+                modalOverlay.classList.add('modal-overlay-visible');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            // Handle My Blog button click
+            blogButton.addEventListener('click', function() {
+                blogModal.classList.add('projects-modal-visible');
+                modalOverlay.classList.add('modal-overlay-visible');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            // Handle Achievements button click
+            achievementsButton.addEventListener('click', function() {
+                achievementsModal.classList.add('projects-modal-visible');
+                modalOverlay.classList.add('modal-overlay-visible');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            // Handle Contact Me button click
+            contactButton.addEventListener('click', function() {
+                contactModal.classList.add('projects-modal-visible');
                 modalOverlay.classList.add('modal-overlay-visible');
                 document.body.style.overflow = 'hidden';
             });
@@ -1507,8 +2198,8 @@
                         newBubble.id = 'newChatBubble';
                         newBubble.innerHTML = `
                             <div class="chat-bubble-content">
-                                <h3>New Message : </h3>
-                                <p>AI can't replace real talent and skill.Now, try hovering ur cursor on Yelva's head😂</p>
+                                <h3>New Message  </h3>
+                                <p>AI can't replace real talent and skill. Take this guy Yelva as an example. Hover ur cursor on Yelva's head</p>
                                 <button id="newOkButton">OK</button>
                             </div>
                         `;
@@ -1565,6 +2256,31 @@
                 projectsModal.classList.add('projects-modal-visible');
             });
             
+            // Handle modal close for new modals
+            teamModalClose.addEventListener('click', function() {
+                teamModal.classList.remove('projects-modal-visible');
+                modalOverlay.classList.remove('modal-overlay-visible');
+                document.body.style.overflow = '';
+            });
+            
+            blogModalClose.addEventListener('click', function() {
+                blogModal.classList.remove('projects-modal-visible');
+                modalOverlay.classList.remove('modal-overlay-visible');
+                document.body.style.overflow = '';
+            });
+            
+            achievementsModalClose.addEventListener('click', function() {
+                achievementsModal.classList.remove('projects-modal-visible');
+                modalOverlay.classList.remove('modal-overlay-visible');
+                document.body.style.overflow = '';
+            });
+            
+            contactModalClose.addEventListener('click', function() {
+                contactModal.classList.remove('projects-modal-visible');
+                modalOverlay.classList.remove('modal-overlay-visible');
+                document.body.style.overflow = '';
+            });
+            
             // Close modals when clicking overlay
             modalOverlay.addEventListener('click', function() {
                 profileModal.classList.remove('profile-modal-visible');
@@ -1573,6 +2289,10 @@
                 project2Modal.classList.remove('projects-modal-visible');
                 project3Modal.classList.remove('projects-modal-visible');
                 project4Modal.classList.remove('projects-modal-visible');
+                teamModal.classList.remove('projects-modal-visible');
+                blogModal.classList.remove('projects-modal-visible');
+                achievementsModal.classList.remove('projects-modal-visible');
+                contactModal.classList.remove('projects-modal-visible');
                 modalOverlay.classList.remove('modal-overlay-visible');
                 document.body.style.overflow = '';
             });
@@ -1696,6 +2416,25 @@
                         onlineStatus.classList.remove('profile-button-pop');
                     },50);
                 }, 100);
+            });
+        });
+        
+        // LinkedIn button functionality for team members
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all LinkedIn input fields
+            const linkedinInputs = document.querySelectorAll('.linkedin-input');
+            
+            // Add event listeners to each input
+            linkedinInputs.forEach(input => {
+                const button = input.nextElementSibling;
+                
+                // Set initial button href
+                button.href = input.value;
+                
+                // Update button href when input changes
+                input.addEventListener('input', function() {
+                    button.href = this.value;
+                });
             });
         });
     </script>
